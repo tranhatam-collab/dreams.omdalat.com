@@ -1,0 +1,15 @@
+{
+  "account_id": "f3f9e76222dcb488d5e303e29e8ba192",
+  "name": "dreams-omdalat",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-06-28",
+  "compatibility_flags": ["nodejs_compat"],
+  "pages_build_output_dir": ".vercel/output/static",
+  "d1_databases": [
+    {
+      "binding": "DREAMS_DB",
+      "database_name": "dreams-om-dalat-db",
+      "database_id": "c1c3a47f-23be-4b5b-90fb-95ded80984f3"
+    }
+  ]
+}

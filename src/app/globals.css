@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+:root {
+  --color-dream: #8B5CF6;
+  --color-dream-light: #A78BFA;
+  --color-earth: #78716C;
+  --color-earth-light: #A8A29E;
+  --color-cream: #F5F0EB;
+  --color-stone: #44403C;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+::selection {
+  background-color: #8B5CF6;
+  color: white;
+}
