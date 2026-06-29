@@ -3,15 +3,28 @@ import bcrypt from 'bcryptjs'
 import { queryOne } from '@/lib/db-service'
 import { createSession } from '@/lib/session'
 
+interface LoginBody {
+  email?: string
+  password?: string
+}
+
+interface UserRow {
+  id: string
+  email: string
+  name: string
+  role: string
+  password_hash: string
+}
+
 export const POST = async (request: NextRequest) => {
   try {
-    const body = await request.json()
+    const body = await request.json() as LoginBody
 
     if (!body.email || !body.password) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 })
     }
 
-    const user = await queryOne('SELECT * FROM users WHERE email = ?', body.email)
+    const user = await queryOne<UserRow>('SELECT * FROM users WHERE email = ?', body.email)
 
     if (!user) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
@@ -23,7 +36,7 @@ export const POST = async (request: NextRequest) => {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
 
-    const sessionToken = createSession({
+    const sessionToken = await createSession({
       userId: user.id,
       email: user.email,
       name: user.name,

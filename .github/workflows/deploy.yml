@@ -17,22 +17,18 @@ jobs:
 
       - run: npm ci
 
-      - run: npm run seed
-        env:
-          NODE_ENV: production
+      - run: npm run cf:build
 
-      - run: npm run build
-
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@v1
+      - name: Apply D1 migrations
+        uses: cloudflare/wrangler-action@v3
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            cd /var/www/dreams.omdalat.com
-            git pull origin main
-            npm ci
-            npm run seed
-            npm run build
-            pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          command: d1 migrations apply dreams-om-dalat-db --remote
+
+      - name: Publish to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        env:
+          OPEN_NEXT_DEPLOY: "true"
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          command: deploy

@@ -4,7 +4,7 @@ import { getSession } from '@/lib/session'
 
 export const PATCH = async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const sessionToken = request.cookies.get('session_token')?.value
-  if (!sessionToken || !getSession(sessionToken)) {
+  if (!sessionToken || !await getSession(sessionToken)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

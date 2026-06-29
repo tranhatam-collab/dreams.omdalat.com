@@ -2,10 +2,20 @@ import { NextRequest, NextResponse } from 'next/server'
 import { queryAll, queryOne, run } from '@/lib/db-service'
 import { getSession } from '@/lib/session'
 
+interface DreamListRow {
+  id: string
+  full_name: string
+  email: string
+  locale: string
+  status: string
+  dream_statement: string | null
+  created_at: string
+}
+
 export const GET = async (request: NextRequest) => {
   try {
     const sessionToken = request.cookies.get('session_token')?.value
-    if (!sessionToken || !getSession(sessionToken)) {
+    if (!sessionToken || !await getSession(sessionToken)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -27,12 +37,12 @@ export const GET = async (request: NextRequest) => {
 
     dataSql += ' ORDER BY created_at DESC LIMIT ? OFFSET ?'
 
-    const totalRow = await queryOne(countSql, ...params)
+    const totalRow = await queryOne<{ total: number }>(countSql, ...params)
     const total = totalRow?.total || 0
-    const dreams = await queryAll(dataSql, ...params, String(limit), String(offset))
+    const dreams = await queryAll<DreamListRow>(dataSql, ...params, String(limit), String(offset))
 
     return NextResponse.json({
-      dreams: dreams.map((row: any) => ({
+      dreams: dreams.map((row) => ({
         id: row.id,
         fullName: row.full_name,
         email: row.email,
@@ -51,7 +61,7 @@ export const GET = async (request: NextRequest) => {
 
 export const PATCH = async (request: NextRequest) => {
   const sessionToken = request.cookies.get('session_token')?.value
-  if (!sessionToken || !getSession(sessionToken)) {
+  if (!sessionToken || !await getSession(sessionToken)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -73,7 +83,7 @@ export const PATCH = async (request: NextRequest) => {
     await run(
       `INSERT INTO audit_events (id, actor_id, actor_role, event_type, entity_type, entity_id, next_value, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      crypto.randomUUID(), getSession(sessionToken)?.userId, 'admin', 'dream_status_changed', 'dream', body.id, body.status, now
+      crypto.randomUUID(), (await getSession(sessionToken))?.userId, 'admin', 'dream_status_changed', 'dream', body.id, body.status, now
     )
 
     return NextResponse.json({ id: body.id, status: body.status })

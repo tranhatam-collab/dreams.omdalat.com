@@ -1,10 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { queryOne } from '@/lib/db-service'
 
+interface DreamRow {
+  id: string
+  locale: string
+  full_name: string
+  email: string
+  phone: string | null
+  current_location: string | null
+  preferred_language: string | null
+  dream_statement: string
+  why_it_matters: string | null
+  blockers: string | null
+  attempts: string | null
+  first_small_step: string | null
+  dalat_connection: string | null
+  current_role: string | null
+  privacy_level: string
+  status: string
+  created_at: string
+}
+
 export const GET = async (_request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   try {
     const { id } = await params
-    const row = await queryOne('SELECT * FROM dreams WHERE id = ?', id)
+    const row = await queryOne<DreamRow>('SELECT * FROM dreams WHERE id = ?', id)
 
     if (!row) {
       return NextResponse.json({ error: 'Dream not found' }, { status: 404 })

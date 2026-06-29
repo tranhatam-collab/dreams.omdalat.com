@@ -4,7 +4,7 @@ import { getSession } from '@/lib/session'
 
 export const GET = async (request: NextRequest) => {
   const sessionToken = request.cookies.get('session_token')?.value
-  if (!sessionToken || !getSession(sessionToken)) {
+  if (!sessionToken || !await getSession(sessionToken)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -14,7 +14,7 @@ export const GET = async (request: NextRequest) => {
 
 export const POST = async (request: NextRequest) => {
   const sessionToken = request.cookies.get('session_token')?.value
-  if (!sessionToken || !getSession(sessionToken)) {
+  if (!sessionToken || !await getSession(sessionToken)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

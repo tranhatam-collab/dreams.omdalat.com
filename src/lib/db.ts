@@ -1,27 +1,12 @@
-import Database from 'better-sqlite3'
-import path from 'path'
-import fs from 'fs'
+import { getD1 } from './d1'
 
-const DB_PATH = path.join(process.cwd(), 'data', 'dreams.db')
-
-let db: Database.Database | null = null
-
-export function getDb(): Database.Database {
-  if (!db) {
-    const dir = path.dirname(DB_PATH)
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true })
-    }
-    db = new Database(DB_PATH)
-    db.pragma('journal_mode = WAL')
-    db.pragma('foreign_keys = ON')
-    initSchema(db)
-  }
-  return db
+export async function getDb() {
+  return getD1()
 }
 
-function initSchema(db: Database.Database) {
-  db.exec(`
+export async function initSchema(): Promise<void> {
+  const d1 = await getD1()
+  await d1.exec(`
     CREATE TABLE IF NOT EXISTS dreams (
       id TEXT PRIMARY KEY,
       locale TEXT NOT NULL,
@@ -163,12 +148,15 @@ function initSchema(db: Database.Database) {
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
     );
-  `)
-}
 
-export function closeDb() {
-  if (db) {
-    db.close()
-    db = null
-  }
+    CREATE TABLE IF NOT EXISTS sessions (
+      token TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      email TEXT NOT NULL,
+      name TEXT NOT NULL,
+      role TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      expires_at TEXT NOT NULL
+    );
+  `)
 }

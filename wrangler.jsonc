@@ -2,9 +2,14 @@
   "account_id": "f3f9e76222dcb488d5e303e29e8ba192",
   "name": "dreams-omdalat",
   "main": ".open-next/worker.js",
+  "routes": [
+    {
+      "pattern": "dreams.omdalat.com/*",
+      "zone_name": "omdalat.com"
+    }
+  ],
   "compatibility_date": "2026-06-28",
   "compatibility_flags": ["nodejs_compat"],
-  "pages_build_output_dir": ".vercel/output/static",
   "d1_databases": [
     {
       "binding": "DREAMS_DB",

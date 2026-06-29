@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -18,7 +18,7 @@ export default function AdminStoriesPage() {
   const [stories, setStories] = useState<StoryRow[]>([])
   const [loading, setLoading] = useState(true)
 
-  const fetchStories = async () => {
+  const fetchStories = useCallback(async () => {
     try {
       const res = await fetch('/api/admin/stories', { credentials: 'include' })
       if (res.status === 401) { router.push('/admin/login'); return }
@@ -28,11 +28,12 @@ export default function AdminStoriesPage() {
       setStories([])
     }
     setLoading(false)
-  }
+  }, [router])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchStories()
-  }, [])
+  }, [fetchStories])
 
   const handleStatusChange = async (id: string, publicationStatus: string) => {
     try {

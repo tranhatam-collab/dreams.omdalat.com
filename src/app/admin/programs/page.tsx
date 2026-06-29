@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Program } from '@/lib/types'
@@ -35,7 +35,7 @@ export default function AdminProgramsPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
-  const fetchPrograms = async () => {
+  const fetchPrograms = useCallback(async () => {
     try {
       const res = await fetch('/api/admin/programs', { credentials: 'include' })
       if (res.status === 401) { router.push('/admin/login'); return }
@@ -45,11 +45,12 @@ export default function AdminProgramsPage() {
       setPrograms([])
     }
     setLoading(false)
-  }
+  }, [router])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchPrograms()
-  }, [])
+  }, [fetchPrograms])
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()

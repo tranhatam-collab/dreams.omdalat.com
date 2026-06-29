@@ -4,7 +4,7 @@ import { getSession } from '@/lib/session'
 
 export const PATCH = async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const sessionToken = request.cookies.get('session_token')?.value
-  if (!sessionToken || !getSession(sessionToken)) {
+  if (!sessionToken || !await getSession(sessionToken)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -29,7 +29,7 @@ export const PATCH = async (request: NextRequest, { params }: { params: Promise<
     await run(
       `INSERT INTO audit_events (id, actor_id, actor_role, event_type, entity_type, entity_id, next_value, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      crypto.randomUUID(), getSession(sessionToken)?.userId, 'admin', `referral_${body.status}`, 'referral', id, body.status, now
+      crypto.randomUUID(), (await getSession(sessionToken))?.userId, 'admin', `referral_${body.status}`, 'referral', id, body.status, now
     )
 
     return NextResponse.json({ id, status: body.status })

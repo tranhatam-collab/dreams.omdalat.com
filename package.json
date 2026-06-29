@@ -6,18 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "seed": "node scripts/seed.js",
-    "deploy:build": "npm run seed && npm run build",
-    "deploy:start": "pm2 start ecosystem.config.js",
-    "deploy:restart": "pm2 restart ecosystem.config.js",
-    "deploy:stop": "pm2 stop ecosystem.config.js",
-    "deploy:logs": "pm2 logs dreams-omdalat",
-    "lint": "eslint"
+    "seed": "wrangler d1 execute dreams-om-dalat-db --remote --file=migrations/0001_initial.sql",
+    "migrate": "wrangler d1 migrations apply dreams-om-dalat-db --remote",
+    "cf:build": "opennextjs-cloudflare build",
+    "deploy": "npm run cf:build && node scripts/deploy-worker.mjs",
+    "dev:cf": "wrangler dev",
+    "lint": "eslint",
+    "lint:src": "eslint \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.20.1",
     "bcryptjs": "^3.0.3",
-    "better-sqlite3": "^12.11.1",
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -26,7 +25,6 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
-    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

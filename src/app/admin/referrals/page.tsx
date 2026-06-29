@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -17,7 +17,7 @@ export default function AdminReferralsPage() {
   const [referrals, setReferrals] = useState<ReferralRow[]>([])
   const [loading, setLoading] = useState(true)
 
-  const fetchReferrals = async () => {
+  const fetchReferrals = useCallback(async () => {
     try {
       const res = await fetch('/api/admin/referrals', { credentials: 'include' })
       if (res.status === 401) { router.push('/admin/login'); return }
@@ -27,11 +27,12 @@ export default function AdminReferralsPage() {
       setReferrals([])
     }
     setLoading(false)
-  }
+  }, [router])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchReferrals()
-  }, [])
+  }, [fetchReferrals])
 
   const handleAction = async (id: string, status: string) => {
     try {

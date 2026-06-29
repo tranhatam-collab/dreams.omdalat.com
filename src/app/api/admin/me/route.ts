@@ -8,7 +8,7 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json({ authenticated: false }, { status: 401 })
   }
 
-  const user = getSession(sessionToken)
+  const user = await getSession(sessionToken)
 
   if (!user) {
     return NextResponse.json({ authenticated: false }, { status: 401 })

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { run, queryOne } from '@/lib/db-service'
+import { run } from '@/lib/db-service'
 
 export const POST = async (request: NextRequest) => {
   try {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -13,14 +13,20 @@ interface DreamRow {
   createdAt: string
 }
 
+interface Pagination {
+  page: number
+  total: number
+  totalPages: number
+}
+
 export default function AdminDreamsPage() {
   const router = useRouter()
   const [dreams, setDreams] = useState<DreamRow[]>([])
-  const [pagination, setPagination] = useState({ page: 1, total: 0, totalPages: 0 })
+  const [pagination, setPagination] = useState<Pagination>({ page: 1, total: 0, totalPages: 0 })
   const [statusFilter, setStatusFilter] = useState('')
   const [loading, setLoading] = useState(true)
 
-  const fetchDreams = async (page = 1) => {
+  const fetchDreams = useCallback(async (page = 1) => {
     setLoading(true)
     try {
       const params = new URLSearchParams({ page: String(page), limit: '20' })
@@ -38,11 +44,14 @@ export default function AdminDreamsPage() {
       router.push('/admin/login')
     }
     setLoading(false)
-  }
+  }, [statusFilter, router])
 
   useEffect(() => {
-    fetchDreams()
-  }, [statusFilter])
+    const timer = setTimeout(() => {
+      void fetchDreams()
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [fetchDreams])
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
