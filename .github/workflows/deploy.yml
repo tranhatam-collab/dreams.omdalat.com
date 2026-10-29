@@ -2,7 +2,7 @@ name: Deploy Dreams Ôm Đà Lạt
 
 on:
   push:
-    branches: [main]
+    branches: [master]
 
 jobs:
   deploy:
