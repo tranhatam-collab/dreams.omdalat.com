@@ -8,17 +8,22 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## Quick Start
 ```bash
-npm run seed    # Seed database (admin user + programs)
-npm run dev     # Start dev server on localhost:3456
-npm run build   # Production build
-npm run start   # Start production server
+npm ci          # Install dependencies
+npm run dev     # Start Next.js dev server
+npm run build   # Production build (Next.js)
+npm run cf:build # Production build for Cloudflare Workers
+npm run deploy  # Build + deploy to Cloudflare Workers
+npm run seed    # Seed remote D1 database
+npm run migrate # Apply D1 migrations to remote
 ```
 
 ## Architecture
 - **Framework:** Next.js 16 with App Router
-- **Database:** SQLite via better-sqlite3 (`data/dreams.db`)
+- **Runtime:** Cloudflare Workers via @opennextjs/cloudflare
+- **Database:** Cloudflare D1 (binding: `DREAMS_DB`)
 - **Styling:** Tailwind CSS v4
 - **Languages:** Vietnamese (canonical) + English
+- **Deploy:** GitHub Actions → Cloudflare Workers (trigger: push to `master`)
 
 ## Routes
 - `/vi/*` — Vietnamese pages
